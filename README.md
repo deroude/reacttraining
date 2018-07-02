@@ -45,6 +45,64 @@ The component also has a class member `props` that contains all attributes passe
 
 The component can have a regular stylesheet attached, simply by importing it.
 
+## Routing
+
+Four steps to enable routing:
+
+First, create the routes:
+
+```javascript
+export default [    
+    {
+        path: "/",
+        component: Home,
+        exact: true,
+    },
+    {
+        path: "/page/:page",
+        component: Page,
+        exact: true,
+    }
+]
+```
+
+Then, wrap the entry point component in the `BrowserRouter`:
+
+```javascript
+import { BrowserRouter as Router } from "react-router-dom";
+
+...
+
+        <Router>
+            <App />
+        </Router>
+```
+
+In the entry point component, render the route outlet:
+
+```javascript
+import { Route, Switch } from 'react-router-dom';
+import routes from "../../routes";
+    ...
+    
+    <Switch>
+          {routes.map(route => <Route key={route.path} {...route} />)}
+    </Switch>
+
+```
+
+When we want to navigate to a path:
+
+```javascript 
+import { Link } from 'react-router-dom';
+
+...
+
+    <Link to={'/my/path'}>My Link</Link>
+```
+
+If we want to get the route parameters, we can find them inside the React Component class, in `this.props.match.params.myParam`.
+
 ## JSX
 
 The content returned by the `render` method in `App.js` is somewhat unusual. 
@@ -176,3 +234,91 @@ What these do is:
 
 ## Material UI
 
+The thing React is best at is boxing UI functionality into reusable components. What more can we want? 
+Well, two things actually:
+
+- Theming: React is not so good at working with styles -- for one thing, Create React App doesn't come with a CSS prepreprocessor, like LESS or SASS, and since without ejecting we have no access to Webpack (and Babel), we also cannot roll our own solution easily. So, we would like to have a way to encapsulate and reuse styles across components.
+- Also, we'd like some basic components ready to go at the start of the development (layout grid, button, dialog, menu bar, drawer, progress bar) - the more, the merrier
+
+This is where any one of the competing component frameworks come into play. It appears that the most popular right now is [Material UI](https://material-ui.com/getting-started/installation/).
+
+We'll just add it to the dependency list. To complete the dependency summary, we need to import the font into the root stylesheet, `index.css`.
+
+```css
+@import url('https://fonts.googleapis.com/css?family=PT+Sans');
+```
+
+That makes sure the `PT Sans` familiy (or any other you choose) will be available to the entire project.
+
+The next step is create the baseline, that will be extended by every component.
+That's `withRoot.js`.
+
+First, we [create a theme](https://material-ui.com/customization/themes/), by extending the main theme with custom features:
+
+```javascript
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: grey[300],
+      main: grey[700],
+      dark: grey[900],
+    },
+    secondary: {
+      light: green[300],
+      main: green[500],
+      dark: green[700],
+    },
+  },
+  typography:{
+    fontFamily:['PT Sans']
+  }
+});
+```
+
+Then we create the theme injector that will wrap all of our Components:
+
+```javascript
+function withRoot(Component) {
+  function WithRoot(props) {
+    return (
+      <MuiThemeProvider theme={theme}>
+        <CssBaseline />
+        <Component {...props} />
+      </MuiThemeProvider>
+    );
+  }
+  return WithRoot;
+}
+```
+
+And then we use it in the Components:
+
+```javascript
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import withRoot from '../withRoot';
+
+...
+
+MyComponent.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withRoot(withStyles(styles)(MyComponent));
+```
+
+`PropTypes` is just a way to check a type for required attributes (in our case `classes`) - a poor man's typing.
+
+`withStyles` links a style sheet to the component, by adding the `classes` property.
+
+`withRoot` adds the previously created baseline theme to the Component.
+
+A few additional notes on Material UI:
+
+- You need to import every component you want to use separately
+- You need to import every icon you use separately -- you can find them [here](https://material.io/tools/icons/?style=baseline)
+- Material components you want to use often:
+  - Button
+  - Typography
+  - Card
+  - Grid
