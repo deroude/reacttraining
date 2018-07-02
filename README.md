@@ -57,6 +57,8 @@ What React does so far is help us manipulate templates and box components to be 
 
 ## Enter Redux
 
+### Why Redux?
+
 The philosophy of Redux is "single source of truth".
 
 You can view the application as a state machine. 
@@ -87,6 +89,8 @@ However, the condition applies strictly to the reducer function, this doesn't me
 
 ![Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/master/uml/redux.puml)
 
+### Writing Redux
+
 While some Redux implementations are very opinionated (e.g. NgRx for Angular), React Redux is rather loose in its recommendations of code structure.
 
 So, the current arrangement is based more on [related literature](https://hackernoon.com/my-journey-toward-a-maintainable-project-structure-for-react-redux-b05dfd999b5) than on concrete guidelines from the creators.
@@ -99,6 +103,73 @@ The main principles are:
   - reducers, in fact a single reducer function taking as arguments the current state and the action dispatched; the individual reducer operations should be branches of a `switch` on the action type
   - action constructors: the point is to hide as much of Redux as possible from the rest of the application; so, instead of dispatching the actual action object, it's more elegant to build the action by using an exposed function.
   - getters: again, the point is to hide Redux from the world; instead of always accessing the state object and navigating to the correct attribute, we can expose the attribute directly through getters.
+
+But wait, we said there is ONLY ONE state -- yet all these "ducks" have their own state. To comply with the Redux principle, we need to `combine` them in one state:
+
+```
+import { createStore, applyMiddleware, combineReducers } from 'redux'
+import thunk from 'redux-thunk';
+
+import myDuck1 from './myDuck1';
+import myDuck2 from './myDuck2';
+
+
+export default (initialState) =>
+    createStore(combineReducers(
+        {
+            myDuck1,
+            myDuck2
+        }
+    ), initialState, applyMiddleware(thunk));
+```
+
+And finally, the createStore(state) method will be used at the start of our application (the entry point):
+
+```
+import { Provider as ReduxProvider } from "react-redux";
+import createStore from './ducks';
+
+const store = createStore(window.REDUX_DATA);
+
+const jsx = (
+    <ReduxProvider store={store}>
+        <Router>
+            <App />
+        </Router>
+    </ReduxProvider>
+);
+```
+
+### Using Redux
+
+Components can be divided into "dumb" and "smart", or "components" and "containers", where "dumb" components simply render the exact same way each time when they are invoked with the same parameters, whereas containers perform some data fetching before completing their rendering, which means their final composition may vary -- seems remarkably easy to compare with the pure function concept we discussed earlier.
+
+With Redux, "smart" components will likely need to be connected to the application state, to dispatch actions and to receive updates from the state stream. To do that, React needs us to `connect` them:
+
+```
+import { connect } from 'react-redux';
+import { actions as myDuckActions, myDuckItemGetter } from '../ducks/myduck';
+
+...
+
+const mapStateToProps = (state) => {
+    return {
+        myDuckItem:myDuckItemGetter(state)
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        myDuckAction: () => dispatch(myDuckActions.action()),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Component);
+```
+
+What these do is:
+
+- import the action constructors and the getters from the duck responsible 
 
 ## Material UI
 

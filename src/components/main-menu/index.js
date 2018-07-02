@@ -1,8 +1,3 @@
-/*
- * (c)Mindit 2018
- * Last modified: Friday, 22nd June 2018 2:23:09 pm
- * Author: Valentin Raduti (valentin.raduti@mindit.io>)
- */
 import React from 'react';
 
 import { connect } from 'react-redux';
