@@ -70,7 +70,7 @@ A few usual features:
 
 This is an example of such behavior:
 
-![No Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/uml/no_redux.puml)
+![No Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/master/uml/no_redux.puml)
 
 Redux brings in a different philosophy:
 
@@ -85,7 +85,7 @@ A call to an API, for example, is __not__ a pure function, because it fails both
 
 However, the condition applies strictly to the reducer function, this doesn't mean that Ajax calls cannot be made using Redux. For example, if the call to the API is one reducer and the response from the API is another reducer, then we are fine, both are pure functions. However, we need to connect them. For this, there are a number of implementations that come to the rescue: in this example we use `redux-thunk` which simply allows the reducer to return a function instead of a value (which still abides by the pure function law).
 
-![Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/uml/redux.puml)
+![Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/master/uml/redux.puml)
 
 ## Material UI
 
