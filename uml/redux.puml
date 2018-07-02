@@ -15,13 +15,13 @@ Redux -> Redux: Action: stopProgress
 Redux -> Progress: stop
 Redux -> Redux: Action: pageFinishedLoading
 Redux -> ComponentA: update
-ComponentA -> ComponentB: init
-ComponentB -> Redux: Action: componentLoad
+ComponentA -> ComponentA_B: init
+ComponentA_B -> Redux: Action: componentLoad
 Redux -> Redux: Action: progressStart
 Redux -> Service: getComponentContent
 Redux -> Progress: start
 Service -> Redux: Action: stopProgress
 Redux -> Progress: stop
 Redux -> Redux: Action: componentFinishedLoading
-Redux -> ComponentB: update
+Redux -> ComponentA_B: update
 @enduml
