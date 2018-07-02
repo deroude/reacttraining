@@ -87,7 +87,7 @@ A call to an API, for example, is __not__ a pure function, because it fails both
 
 However, the condition applies strictly to the reducer function, this doesn't mean that Ajax calls cannot be made using Redux. For example, if the call to the API is one reducer and the response from the API is another reducer, then we are fine, both are pure functions. However, we need to connect them. For this, there are a number of implementations that come to the rescue: in this example we use `redux-thunk` which simply allows the reducer to return a function instead of a value (which still abides by the pure function law).
 
-![Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/master/uml/redux.puml)
+![Redux](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/deroude/reacttraining/master/uml/redux.puml)
 
 ### Writing Redux
 
@@ -106,7 +106,7 @@ The main principles are:
 
 But wait, we said there is ONLY ONE state -- yet all these "ducks" have their own state. To comply with the Redux principle, we need to `combine` them in one state:
 
-```
+```javascript
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import thunk from 'redux-thunk';
 
@@ -125,7 +125,7 @@ export default (initialState) =>
 
 And finally, the createStore(state) method will be used at the start of our application (the entry point):
 
-```
+```javascript
 import { Provider as ReduxProvider } from "react-redux";
 import createStore from './ducks';
 
@@ -146,7 +146,7 @@ Components can be divided into "dumb" and "smart", or "components" and "containe
 
 With Redux, "smart" components will likely need to be connected to the application state, to dispatch actions and to receive updates from the state stream. To do that, React needs us to `connect` them:
 
-```
+```javascript
 import { connect } from 'react-redux';
 import { actions as myDuckActions, myDuckItemGetter } from '../ducks/myduck';
 
@@ -164,12 +164,15 @@ const mapDispatchToProps = (dispatch) => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default connect(mapStateToProps, mapDispatchToProps)(MyComponent);
 ```
 
 What these do is:
 
-- import the action constructors and the getters from the duck responsible 
+- import the action constructors and the getters from the respective duck
+- inject the state and the dispatch method -- this is in fact split into two steps
+  - the first is to create a convenient pair of methods that expose to the Component the state items and the Redux actions; we call those `mapStateToProps` and `mapDispatchToProps`, because we commonly call `props` the parameters that every (dumb) component receives, such as title, text, or width.
+  - the second step is where the injection takes place: our React Component no longer exports its own class -- instead, it exports the result of the React Redux function call (or closure) `connect`.
 
 ## Material UI
 

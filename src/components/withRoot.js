@@ -1,8 +1,3 @@
-/*
- * (c)Mindit 2018
- * Last modified: Friday, 22nd June 2018 2:23:22 pm
- * Author: Valentin Raduti (valentin.raduti@mindit.io>)
- */
 import React from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import grey from '@material-ui/core/colors/grey';
