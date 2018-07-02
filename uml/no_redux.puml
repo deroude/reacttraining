@@ -1,0 +1,26 @@
+@startuml No Redux
+actor User
+control ComponentA
+control ComponentA_B
+control Progress
+database Service
+User -> ComponentA: init (page load)
+ComponentA -> Progress: init
+ComponentA -> Service: getPageContent
+ComponentA -> Progress: start
+Service --> ComponentA: response
+ComponentA -> ComponentA_B: init
+ComponentA -> Progress: stop
+alt delegate business to child ComponentA_B
+    ComponentA_B -> Service: getComponentContent
+    ComponentA_B -> Progress: start
+    Service --> ComponentA_B: response
+    ComponentA_B -> Progress: stop
+else keep control on parent ComponentA
+ComponentA -> Service: getComponentContent
+ComponentA -> Progress: start
+Service --> ComponentA: response
+ComponentA -> ComponentA_B: setContent
+ComponentA -> Progress: stop
+end
+@enduml

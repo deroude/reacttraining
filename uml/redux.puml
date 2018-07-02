@@ -1,0 +1,27 @@
+@startuml No Redux
+actor User
+control ComponentA
+control ComponentA_B
+control Progress
+database Service
+entity Redux
+User -> ComponentA: init (page load)
+ComponentA -> Redux: Action: pageLoad
+Redux -> Redux: Action: startProgress
+Redux -> Service: getPageContent
+Redux -> Progress: start
+Service -> Redux: response
+Redux -> Redux: Action: stopProgress
+Redux -> Progress: stop
+Redux -> Redux: Action: pageFinishedLoading
+Redux -> ComponentA: update
+ComponentA -> ComponentB: init
+ComponentB -> Redux: Action: componentLoad
+Redux -> Redux: Action: progressStart
+Redux -> Service: getComponentContent
+Redux -> Progress: start
+Service -> Redux: Action: stopProgress
+Redux -> Progress: stop
+Redux -> Redux: Action: componentFinishedLoading
+Redux -> ComponentB: update
+@enduml

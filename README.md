@@ -53,6 +53,39 @@ Indeed, that's not regular javascript, nor is it regular HTML. That's React's te
 
 This language makes it easy to compose the DOM depending on the business logic, by using all the normal javascript control structures and language aids, but manipulating objects instead of strings.
 
+What React does so far is help us manipulate templates and box components to be easily (re)usable. 
+
 ## Enter Redux
 
+The philosophy of Redux is "single source of truth".
+
+You can view the application as a state machine. 
+
+A classical application is represented by a number of components collaborating in the sens of sharing information via parameters and services.
+A few usual features:
+
+- child components receive essential business arguments from parent components or from DI (e.g. access to services)
+- child components emit events to parent components, who are responsible to handle them
+- each component needs to be tested in an environment, or context
+
+This is an example of such behavior:
+
+![No Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/uml/no_redux.puml)
+
+Redux brings in a different philosophy:
+
+- The state of all application features (e.g. components) is maintained in a single, immutable, structure ("single source of truth") called __state__
+- Since the state is immutable, it cannot be altered, it can only be replaced, which guarantees there is no ambiguity as to the order of operations.
+- To move to the next state, we need to __dispatch__ an __action__, which is characterized by an action type and a set of arguments
+- A __reducer__ is a [pure function](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976)
+  - Given the same input, will always return the same output
+  - Produces no side effects
+
+A call to an API, for example, is __not__ a pure function, because it fails both conditions: two calls to the same API may very well return a different response, even if we made them synchronous, which we don't; also, the very reason why we send a POST request for example is to produce side effect.
+
+However, the condition applies strictly to the reducer function, this doesn't mean that Ajax calls cannot be made using Redux. For example, if the call to the API is one reducer and the response from the API is another reducer, then we are fine, both are pure functions. However, we need to connect them. For this, there are a number of implementations that come to the rescue: in this example we use `redux-thunk` which simply allows the reducer to return a function instead of a value (which still abides by the pure function law).
+
+![Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/uml/redux.puml)
+
 ## Material UI
+
