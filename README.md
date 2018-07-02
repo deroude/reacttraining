@@ -87,5 +87,18 @@ However, the condition applies strictly to the reducer function, this doesn't me
 
 ![Redux](http://www.plantuml.com/plantuml/proxy?src=https://raw.github.com/deroude/reacttraining/master/uml/redux.puml)
 
+While some Redux implementations are very opinionated (e.g. NgRx for Angular), React Redux is rather loose in its recommendations of code structure.
+
+So, the current arrangement is based more on [related literature](https://hackernoon.com/my-journey-toward-a-maintainable-project-structure-for-react-redux-b05dfd999b5) than on concrete guidelines from the creators.
+
+The main principles are:
+
+- put everything related to a business feature in a single file (called __duck__), including:
+  - action types (prefix them with the feature name: `LOADING: 'PROGRESS/LOADING'`)
+  - initial state
+  - reducers, in fact a single reducer function taking as arguments the current state and the action dispatched; the individual reducer operations should be branches of a `switch` on the action type
+  - action constructors: the point is to hide as much of Redux as possible from the rest of the application; so, instead of dispatching the actual action object, it's more elegant to build the action by using an exposed function.
+  - getters: again, the point is to hide Redux from the world; instead of always accessing the state object and navigating to the correct attribute, we can expose the attribute directly through getters.
+
 ## Material UI
 
